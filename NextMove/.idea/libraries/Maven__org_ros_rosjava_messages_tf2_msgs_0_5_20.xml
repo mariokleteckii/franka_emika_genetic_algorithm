@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.ros.rosjava_messages:tf2_msgs:0.5.20">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ros/rosjava_messages/tf2_msgs/0.5.20/tf2_msgs-0.5.20.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ros/rosjava_messages/tf2_msgs/0.5.20/tf2_msgs-0.5.20-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ros/rosjava_messages/tf2_msgs/0.5.20/tf2_msgs-0.5.20-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
