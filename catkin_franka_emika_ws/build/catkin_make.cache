@@ -1,2 +1,0 @@
-franka_gazebo_moveit
--DCATKIN_DEVEL_PREFIX=/home/mario/catkin_franka_emika_ws/devel -DCMAKE_INSTALL_PREFIX=/home/mario/catkin_franka_emika_ws/install -G Unix Makefiles
