@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.4.5</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.fer</groupId>
+	<artifactId>NextMove</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>NextMove</name>
+	<description>Algorithm for next move</description>
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>rosjava_mvn</id>
+			<name>Public Rosjava repository</name>
+			<url>https://github.com/rosjava/rosjava_mvn_repo/raw/master</url>
+		</repository>
+		<repository>
+			<id>com.springsource.repository.bundles.release</id>
+			<name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
+			<url>http://repository.springsource.com/maven/bundles/release</url>
+		</repository>
+		<repository>
+			<id>com.springsource.repository.bundles.external</id>
+			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+			<url>http://repository.springsource.com/maven/bundles/external</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ros.rosjava_core</groupId>
+			<artifactId>rosjava</artifactId>
+			<version>0.3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ros.rosjava_messages</groupId>
+			<artifactId>geometry_msgs</artifactId>
+			<version>1.12.7</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.wpi.rail</groupId>
+			<artifactId>jrosbridge</artifactId>
+			<version>0.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ros.rosjava_messages</groupId>
+			<artifactId>std_msgs</artifactId>
+			<version>0.5.11</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ros.rosjava_bootstrap</groupId>
+			<artifactId>message_generation</artifactId>
+			<version>0.3.3</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>
