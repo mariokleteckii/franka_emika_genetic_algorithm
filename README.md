@@ -13,6 +13,6 @@ To launch:
 
 5. run .jar `java -jar ~/NextMove/target/NextMove-0.0.1-SNAPSHOT.jar 0.3 -0.4 0.65 0 0 0 1`
 
-Minimal number of arguments is 7 (respresent next position). Eighth argument is population size (recommended 15) and ninth argument is the maximum number of generations of algorithm.
+Minimal number of arguments is 7 (respresent next position). Eighth argument is population size (by default 15) and ninth argument is the maximum number of generations of algorithm (by default 10).
 
 
