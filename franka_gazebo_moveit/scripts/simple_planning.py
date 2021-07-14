@@ -15,8 +15,6 @@ from std_msgs.msg import String, Bool
 from moveit_commander.conversions import pose_to_list
 from shape_msgs.msg import SolidPrimitive
 from moveit_msgs.msg import CollisionObject, PlanningScene, AttachedCollisionObject
-#import pickle
-#import re
 import threading
 import json
 from std_msgs.msg import String
@@ -27,7 +25,6 @@ from sensor_msgs.msg import JointState
 id = 1;
 flag = True;
 
-exit_event = threading.Event()
 
 
 def all_close(goal, actual, tolerance):
@@ -58,12 +55,8 @@ def publishStartPose(pose_start):
     rate = rospy.Rate(10) # 10hz
 
     while not rospy.is_shutdown():
-    #  rospy.loginfo(pose_start)
         pub.publish(pose_start)
         rate.sleep()
-
-        #if exit_event.is_set():
-            #sys.exit(0)
 
 
 
@@ -75,9 +68,6 @@ def publishTrajectoryResult(result):
         pub.publish(result)
         rate.sleep()
 
-    #if exit_event.is_set():
-        #sys.exit(0)
-
 
 def callbackCheckTrajectory(data):
 
@@ -85,8 +75,6 @@ def callbackCheckTrajectory(data):
     trajectoryId = info[0]
 
     if int(trajectoryId) == id:
-        #experiment = planTrajectory()
-        #experiment.group.set_max_velocity_scaling_factor(0.5)
         pose_start = experiment.group.get_current_pose().pose
 
 
@@ -140,7 +128,6 @@ def callbackCheckTrajectory(data):
 
             for i in plan.joint_trajectory.points:
 
-                #print "###########: ", list(i.positions)
                 if collision_checker_node.start_collision_checker(list(i.positions)) == False:
                     print "Neuspjesna trajektorija"
                     fraction = 0.0
@@ -168,9 +155,6 @@ def callbackCheckTrajectory(data):
         print("id ", id)
 
 
-    """if exit_event.is_set():
-        sys.exit(0)
-        """
 
 def checkTrajectory():
 
@@ -181,7 +165,7 @@ def checkTrajectory():
     # run simultaneously.
     #rospy.init_node('listener', anonymous=True)
 
-    rospy.Subscriber("/plan_trajectory/check_trajectory", String, callbackCheckTrajectory)#, queue_size=1)
+    rospy.Subscriber("/plan_trajectory/check_trajectory", String, callbackCheckTrajectory)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
@@ -234,8 +218,6 @@ def callbackBestTrajectory(data):
 
         print("Waypoints ", waypoints)
 
-        #experiment = planTrajectory()
-        #experiment.group.set_max_velocity_scaling_factor(0.5)
 
         plan, fraction = experiment.group.compute_cartesian_path(waypoints,
                                              0.01,
@@ -249,9 +231,6 @@ def callbackBestTrajectory(data):
 
         time.sleep(5)
 
-        """
-    if exit_event.is_set():
-            sys.exit(0)"""
 
 
 def bestTrajectory():
@@ -268,66 +247,7 @@ def bestTrajectory():
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
 
-    """
-class StateValidity():
-    def __init__(self):
-        # subscribe to joint joint states
-        rospy.Subscriber("joint_states", JointState, self.jointStatesCB, queue_size=1)
-        # prepare service for collision check
-        self.sv_srv = rospy.ServiceProxy('/check_state_validity', GetStateValidity)
-        # wait for service to become available
-        self.sv_srv.wait_for_service()
-        rospy.loginfo('service is avaiable')
-        # prepare msg to interface with moveit
-        self.rs = RobotState()
-        self.rs.joint_state.name = ['panda_joint1', 'panda_joint2', 'panda_joint3', 'panda_joint4', 'panda_joint5', 'panda_joint6', 'panda_joint7']
-        self.rs.joint_state.position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-        self.joint_states_received = False
-
-
-    def checkCollision(self):
-        '''
-        check if robotis in collision
-        '''
-        if self.getStateValidity().valid:
-            rospy.loginfo('robot not in collision, all ok!')
-            return True
-        else:
-            rospy.logwarn('robot in collision')
-            return False
-
-
-    def jointStatesCB(self, msg):
-        '''
-        update robot state
-        '''
-        self.rs.joint_state.position = [msg.position[0], msg.position[1], msg.position[2], msg.position[3], msg.position[4], msg.position[5], msg.position[6]]
-        self.joint_states_received = True
-
-
-    def getStateValidity(self, group_name='panda_arm', constraints=None):
-        '''
-        Given a RobotState and a group name and an optional Constraints
-        return the validity of the State
-        '''
-        gsvr = GetStateValidityRequest()
-        gsvr.robot_state = self.rs
-        gsvr.group_name = group_name
-        if constraints != None:
-            gsvr.constraints = constraints
-        result = self.sv_srv.call(gsvr)
-        return result
-
-
-    def start_collision_checker(self):
-        while not self.joint_states_received:
-            rospy.sleep(0.1)
-        rospy.loginfo('joint states received! continue')
-        return self.checkCollision()
-        #rospy.spin()
-
-
-    """
+  
 class StateValidity():
     def __init__(self):
         # subscribe to joint joint states
@@ -343,42 +263,20 @@ class StateValidity():
         self.rs.joint_state.header.stamp = rospy.Time.now()
         self.rs.joint_state.name = ['panda_joint1', 'panda_joint2', 'panda_joint3', 'panda_joint4', 'panda_joint5', 'panda_joint6', 'panda_joint7']
         self.rs.joint_state.position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    #    print "Joint state names: ", self.rs.joint_state.name
-
-    #    print "Joint state positions: ", self.rs.joint_state.position
-    #    print "$$$$$$$$$$$$$: ", str(experiment.group.get_joint_value_target)
-
-        #self.joint_states_received = False
-
-        #self.list = []
+  
 
 
     def checkCollision(self):
         '''
         check if robot is in collision
         '''
-        """
-        if self.getStateValidity().valid:
-            print "TRUE"
-            return True
-        else:
-            print "FALSE"
-            return False
-            """
-        #experiment.group.set_joint_value_target(self.list)
-        #print "Plan: ", experiment.group.plan()
-
-
 
 
         res = self.getStateValidity()
-        #print "+++++++++++++++++++++++++:", res.contacts
 
         if res.valid:
-            #print "TRUE"
             return True
         else:
-            #print "FALSE"
             return False
 
 
@@ -387,9 +285,6 @@ class StateValidity():
         '''
         update robot state
         '''
-        #self.rs.joint_state.position = [msg.position[0], msg.position[1], msg.position[2], msg.position[3], msg.position[4], msg.position[5], msg.position[6]]
-        #self.joint_states_received = True
-
 
     def getStateValidity(self, group_name="panda_arm", constraints=None):
         '''
@@ -399,9 +294,7 @@ class StateValidity():
 
         gsvr = GetStateValidityRequest()
         gsvr.robot_state = self.rs
-        #print "===============: ", self.rs.joint_state.position
         gsvr.group_name = group_name
-    #    gsvr.check_collisions = True
 
         if constraints != None:
             gsvr.constraints = constraints
@@ -410,15 +303,8 @@ class StateValidity():
 
 
     def start_collision_checker(self, positions):
-        #while not self.joint_states_received:
-        #    rospy.sleep(0.1)
-        #rospy.loginfo('joint states received! continue')
         self.rs.joint_state.position = positions
-    #    self.list = positions
-        #print "Joint state names: ", self.rs.joint_state.name
-        #print "Joint state positions: ", self.rs.joint_state.position
         return self.checkCollision()
-        #rospy.spin()
 
 
 
@@ -474,10 +360,6 @@ class planTrajectory():
     collision_object.operation = CollisionObject.ADD
 
 
-    attached_collision_object = moveit_msgs.msg.AttachedCollisionObject()
-    attached_collision_object.link_name = 'world'
-    attached_collision_object.object = collision_object
-
     planning_scene_msg = PlanningScene()
 
     planning_scene_msg.world.collision_objects.append(collision_object)
@@ -505,51 +387,6 @@ class planTrajectory():
     planning_scene_msg.world.collision_objects.append(collision_object)
     planning_scene_msg.world.collision_objects[-1].header.frame_id = planning_frame
 
-    """
-    planning_scene_pub = rospy.Publisher('/planning_scene', PlanningScene, queue_size=10)
-
-    while planning_scene_pub.get_num_connections() < 1:
-        rospy.sleep(0.1)
-
-    planning_scene_msg.is_diff = True
-    planning_scene_pub.publish(planning_scene_msg)
-
-    rospy.sleep(1)
-    """
-    """
-
-
-    planning_scene_pub = rospy.Publisher('/collision_object', CollisionObject, queue_size=10)
-    #time.sleep(2)
-    ""
-
-    #planning_scene_pub = rospy.Publisher('/attached_collision_object', AttachedCollisionObject, queue_size=10)
-
-    while planning_scene_pub.get_num_connections() < 1:
-        rospy.sleep(0.1)
-    #planning_scene_pub.publish(attached_collision_object)
-
-
-    planning_scene_pub.publish(collision_object)
-
-    #time.sleep(2)
-    """
-
-    """
-    planning_scene_msg = PlanningScene()
-
-    planning_scene_msg.world.collision_objects.append(collision_object)
-    planning_scene_msg.world.collision_objects[-1].header.frame_id = planning_frame
-
-    planning_scene_pub = rospy.Publisher('/planning_scene', PlanningScene, queue_size=10)
-
-    while planning_scene_pub.get_num_connections() < 1:
-        rospy.sleep(0.1)
-
-    planning_scene_msg.is_diff = True
-    planning_scene_pub.publish(planning_scene_msg)
-    """
-
 
     collision_object2 = moveit_msgs.msg.CollisionObject()
     collision_object2.header.frame_id = planning_frame
@@ -569,20 +406,12 @@ class planTrajectory():
     collision_object2.primitives.append(primitive2)
     collision_object2.primitive_poses.append(sphere_pose)
     collision_object2.operation = CollisionObject.ADD
-    """
-    attached_collision_object2 = moveit_msgs.msg.AttachedCollisionObject()
-    attached_collision_object2.link_name = 'world'
-    attached_collision_object2.object = collision_object2
-    """
-
-    #planning_scene_msg = PlanningScene()
 
     planning_scene_msg.world.collision_objects.append(collision_object2)
     planning_scene_msg.world.collision_objects[-1].header.frame_id = planning_frame
 
-    #group.apply_planning_scene(planning_scene_msg)
 
-    planning_scene_pub_s = rospy.Publisher('/planning_scene', PlanningScene, queue_size=10)#'/move_group/monitored_planning_scene', PlanningScene, queue_size=10)
+    planning_scene_pub_s = rospy.Publisher('/planning_scene', PlanningScene, queue_size=10)
 
     while planning_scene_pub_s.get_num_connections() < 1:
         rospy.sleep(0.1)
@@ -594,54 +423,7 @@ class planTrajectory():
     rospy.sleep(1)
 
 
-
-
-
-    #planning_scene_msg = PlanningScene()
-    #planning_scene_msg.world.collision_objects.append(collision_object)
-    #planning_scene_msg.world.collision_objects[-1].header.frame_id = planning_frame
-
-    #planning_scene_pub_att = rospy.Publisher('/attached_collision_object', AttachedCollisionObject, queue_size=10)
-    """
-    planning_scene_pub = rospy.Publisher('/collision_object', CollisionObject, queue_size=10)
-
-    while planning_scene_pub.get_num_connections() < 1:
-        rospy.sleep(0.1)
-
-    planning_scene_pub.publish(collision_object2)
-    """
-
-    #planning_scene_pub_att.publish(attached_collision_object2)
-
-    #planning_scene_pub = rospy.Publisher('/planning_scene', PlanningScene, queue_size=10)
-
-    #planning_scene_msg.is_diff = True
-    #planning_scene_pub.publish(planning_scene_msg)
-    #time.sleep(2)
-
-    #group.attach_object("sphere", "world")
-    """
-    planning_scene_msg = PlanningScene()
-
-    planning_scene_msg.world.collision_objects.append(collision_object)
-    planning_scene_msg.world.collision_objects[-1].header.frame_id = planning_frame
-
-
-    planning_scene_pub = rospy.Publisher('/planning_scene', PlanningScene, queue_size=10)
-
-    while planning_scene_pub.get_num_connections() < 1:
-        rospy.sleep(0.1)
-
-    planning_scene_msg.is_diff = True
-    planning_scene_pub.publish(planning_scene_msg)"""
-
-    print "Attached objects********** ", scene.get_attached_objects()
-    print "***************************************"
-
     print "Known objects: ", scene.get_known_object_names()
-    print "Collision objects: ", scene.get_objects
-    #print "Collision objects" , planning_scene_msg.world.collision_objects
-    #print "***************************************"
 
     # Misc variables
     self.robot = robot
@@ -681,10 +463,6 @@ class planTrajectory():
         return False
 
 
-"""
-def signal_handler(signum, frame):
-    exit_event.set()
-"""
 
 experiment = planTrajectory()
 experiment.group.set_max_velocity_scaling_factor(0.5)
@@ -694,8 +472,6 @@ def main():
 
   try:
 
-    #experiment = planTrajectory()
-    #experiment.group.set_max_velocity_scaling_factor(0.5)
     pose_start = experiment.group.get_current_pose().pose
 
     print pose_start
@@ -711,163 +487,12 @@ def main():
 
     time.sleep(0.2)
 
-    """
-    print "_____________________________________________"
-    print "Attached objects********** ", experiment.scene.get_attached_objects()
-    print "***************************************"
-
-    print "Known objects: ", experiment.scene.get_known_object_names()
-    print "Collision objects: ", experiment.scene.get_objects
-    print "Pose start: ", pose_start
-    experiment.group.set_start_state_to_current_state()
-    """
-    waypoints = []
-
-    new_pose = geometry_msgs.msg.Pose()
-
-    """
-
-    new_pose.orientation.x = 0.9999999940154279
-    new_pose.orientation.y = 9.493752474521609E-8
-    new_pose.orientation.z = -0.00010778333272227095
-    new_pose.orientation.w = 2.7252432101990304E-9
-
-    new_pose.position.x = 0.08097301851114759
-    new_pose.position.y = -0.044709861127933494
-    new_pose.position.z = 0.8316939222634463
-
-    waypoints.append(copy.deepcopy(new_pose))
-
-    new_pose.orientation.x = 0.9999999941924482
-    new_pose.orientation.y = -0.000005139317550972195
-    new_pose.orientation.z = -0.00011363516034107933
-    new_pose.orientation.w = 2.690605650401787E-9
-
-    new_pose.position.x = 0.07348603306245183
-    new_pose.position.y = -0.10872098209323072
-    new_pose.position.z = 0.6772401268196487
-    waypoints.append(copy.deepcopy(new_pose))
-
-
-    new_pose.orientation.x = 0.9999999944028589
-    new_pose.orientation.y = -0.000004626892991816148
-    new_pose.orientation.z = -0.00010580257985837844
-    new_pose.orientation.w = 3.781887547114857E-9
-
-    new_pose.position.x = -0.01250784314252041
-    new_pose.position.y = -0.3886185298486774
-    new_pose.position.z = 0.6043521627744746
-    waypoints.append(copy.deepcopy(new_pose))
-
-    new_pose.orientation.x = 1.0
-    new_pose.orientation.y = -0
-    new_pose.orientation.z = -0.0
-    new_pose.orientation.w = 0
-
-    new_pose.position.x = -0.02836904240003349
-    new_pose.position.y = -0.4237137379131917
-    new_pose.position.z = 0.5538263671933711
-    waypoints.append(copy.deepcopy(new_pose))
-
-
-
-    new_pose.position.x = -0.2
-    new_pose.position.y = -0.5
-    new_pose.position.z = 0.5
-    waypoints.append(copy.deepcopy(new_pose))
-
-    new_pose.orientation.x = 1.0
-    new_pose.orientation.y = -0
-    new_pose.orientation.z = -0.0
-    new_pose.orientation.w = 0
-
-    new_pose.position.x = -0.02836904240003349
-    new_pose.position.y = 0.3
-    new_pose.position.z = 0.5538263671933711
-    waypoints.append(copy.deepcopy(new_pose))
-
-
-
-    new_pose.position.x = -0.3
-    new_pose.position.y = 0.4
-    new_pose.position.z = 0.5
-    waypoints.append(copy.deepcopy(new_pose))
-    """
-    """
-    new_pose.orientation.x = 0
-    new_pose.orientation.y = 0
-    new_pose.orientation.z = 0.0
-    new_pose.orientation.w = 1
-
-
-    new_pose.position.x = 0.3
-    new_pose.position.y = -0.2
-    new_pose.position.z = 0.60
-    waypoints.append(copy.deepcopy(new_pose))
-
-
-
-    new_pose.position.x = 0.3
-    new_pose.position.y = -0.2
-    new_pose.position.z = 0.55
-
-
-    waypoints.append(copy.deepcopy(new_pose))
-
-    #experiment.group.set_pose_targets(waypoints)
-    #plan = experiment.group.plan()
-    #print(plan)
-
-#    if plan.joint_trajectory.points:  # True if trajectory contains points
-        #move_success = move_group.execute(plan)
-#        print("Planning was successful")
-#    else:
-#        print("Trajectory is empty. Planning was unsuccessful.")
-
-    plan, fraction = experiment.group.compute_cartesian_path(waypoints,
-                                    0.0075,#0.005,#0.01,
-                                    0.0,
-                                    True)
-
-
-    print("Which percentage of the trajectory was successfully planned?")
-    print(fraction*100,"%")
-    rospy.sleep(5)
-
-
-
-    if(fraction == 1.0) :
-        collision_checker_node = StateValidity()
-        isSuccessful = True
-
-        for i in plan.joint_trajectory.points:
-
-            #print "###########: ", list(i.positions)
-            if collision_checker_node.start_collision_checker(list(i.positions)) == False:
-                print "Neuspjesna trajektorija"
-                isSuccessful = False
-                break
-
-
-
-        print "Uspjesno? ", isSuccessful
-
-
-        if isSuccessful:
-            experiment.execute_plan(plan)
-        rospy.sleep(10.2)
-        """
 
   except rospy.ROSInterruptException:
       return
   except KeyboardInterrupt:
     print "KeyboardInterrupt"
 
-
-  """while not rospy.is_shutdown():
-      if rospy.is_shutdown():
-          signal.signal(signal.SIGINT, signal_handler)
-          """
   print("============ Python experiment complete! ============")
 
 
