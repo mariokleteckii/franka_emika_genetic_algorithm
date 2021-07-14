@@ -9,8 +9,8 @@ To launch:
 
 3. run moveit planning `roslaunch franka_gazebo_moveit gazebo_ctrl_gui.launch` 
 	In RViz:
-		- File -> Open Config -> moveit_start4.rviz -> Open
-		- Move Panda Arm a little bit forward and Plan&Execute it (It will prevent self collision)
+		a) File -> Open Config -> moveit_start4.rviz -> Open
+		b) Move Panda Arm a little bit forward and Plan&Execute it (It will prevent self collision)
 
 4. run rosbridge server `roslaunch rosbridge_server rosbridge_websocket.launch`
 
